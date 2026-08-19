@@ -1,0 +1,390 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Plus Jakarta Sans", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: #0a0a0f;
+  color: #e4e4ec;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: rgba(139, 92, 246, 0.35); }
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #0a0a0f; }
+::-webkit-scrollbar-thumb { background: #1e1e2a; border-radius: 99px; }
+
+.font-display { font-family: var(--font-display); }
+.font-mono2 { font-family: var(--font-mono); }
+
+/* ============================================================
+   SHARED UTILITIES
+   ============================================================ */
+
+.grain {
+  position: fixed; inset: 0; z-index: 60; pointer-events: none; opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.reveal {
+  opacity: 0; transform: translateY(32px);
+  transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1), transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--rd, 0ms);
+}
+.reveal.in { opacity: 1; transform: translateY(0); }
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.float { animation: float-y 6s ease-in-out infinite; }
+
+@keyframes name-shimmer {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+.credit-name {
+  background: linear-gradient(90deg, #8b5cf6, #ec4899, #f59e0b, #06b6d4, #8b5cf6);
+  background-size: 220% auto;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: name-shimmer 3s linear infinite;
+}
+
+.sep { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); }
+
+/* ============================================================
+   1. PAPER DESIGN
+   ============================================================ */
+
+.paper-bg {
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(180, 200, 220, 0.18) 27px, rgba(180, 200, 220, 0.18) 28px),
+    linear-gradient(180deg, #fefcf8 0%, #faf5ed 100%);
+}
+.paper-card {
+  background: #fff;
+  border: 1px solid #e8e0d4;
+  border-radius: 4px;
+  box-shadow:
+    0 1px 3px rgba(120, 100, 70, 0.1),
+    0 8px 24px rgba(120, 100, 70, 0.08);
+  position: relative;
+}
+.paper-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, #e74c3c, #3498db, #2ecc71);
+  border-radius: 4px 4px 0 0;
+}
+.paper-tape {
+  position: absolute;
+  width: 60px; height: 24px;
+  background: rgba(255, 220, 120, 0.65);
+  transform: rotate(-3deg);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  top: -10px; right: 20px;
+}
+.paper-btn {
+  background: #2c3e50;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  padding: 10px 24px;
+  font-weight: 700;
+  font-size: 13px;
+  box-shadow: 4px 4px 0 #bdc3c7;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+}
+.paper-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #bdc3c7; }
+.paper-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #bdc3c7; }
+
+.paper-clip {
+  width: 28px; height: 50px;
+  border: 3px solid #999;
+  border-radius: 14px 14px 4px 4px;
+  position: absolute;
+  top: -18px; left: 16px;
+  transform: rotate(-8deg);
+}
+.paper-clip::after {
+  content: "";
+  position: absolute;
+  width: 16px; height: 30px;
+  border: 3px solid #999;
+  border-radius: 8px 8px 3px 3px;
+  top: 6px; left: 3px;
+  border-top: none;
+}
+
+.paper-stamp {
+  border: 3px solid #e74c3c;
+  border-radius: 6px;
+  color: #e74c3c;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  transform: rotate(-6deg);
+  opacity: 0.75;
+}
+
+/* ============================================================
+   2. LIQUID GLASS
+   ============================================================ */
+
+.lg-bg {
+  background:
+    radial-gradient(50% 40% at 20% 15%, rgba(139, 92, 246, 0.22), transparent),
+    radial-gradient(45% 35% at 80% 20%, rgba(236, 72, 153, 0.18), transparent),
+    radial-gradient(40% 30% at 50% 85%, rgba(6, 182, 212, 0.12), transparent),
+    linear-gradient(135deg, #0f0a1a, #0a0f1e);
+}
+.lg {
+  background: linear-gradient(155deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03) 45%, rgba(255,255,255,0.06));
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.3),
+    inset 0 -1px 0 rgba(255,255,255,0.06),
+    0 20px 60px rgba(0,0,0,0.4);
+  border-radius: 1.5rem;
+}
+.lg-sheen {
+  overflow: hidden;
+  position: relative;
+}
+.lg-sheen::after {
+  content: "";
+  position: absolute;
+  top: -60%; bottom: -60%; left: -30%; width: 34%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,0.15), transparent);
+  transform: translateX(-160%) rotate(8deg);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+.lg-sheen:hover::after { transform: translateX(480%) rotate(8deg); }
+
+.lg-btn {
+  background: linear-gradient(160deg, rgba(255,255,255,0.24), rgba(255,255,255,0.08));
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 12px 32px rgba(0,0,0,0.3);
+  border-radius: 999px;
+  padding: 12px 28px;
+  font-weight: 700;
+  color: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+.lg-btn:hover { transform: translateY(-3px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 18px 44px rgba(0,0,0,0.4); }
+.lg-btn:active { transform: translateY(1px) scale(0.98); }
+
+/* ============================================================
+   3. NEOMORPHISM (soft UI)
+   ============================================================ */
+
+.neo-bg { background: #e0e5ec; }
+.neo-card {
+  background: #e0e5ec;
+  border-radius: 1.5rem;
+  box-shadow:
+    8px 8px 16px #b8bec5,
+    -8px -8px 16px #ffffff;
+}
+.neo-card-in {
+  background: #e0e5ec;
+  border-radius: 1rem;
+  box-shadow:
+    inset 6px 6px 12px #b8bec5,
+    inset -6px -6px 12px #ffffff;
+}
+.neo-btn {
+  background: #e0e5ec;
+  border-radius: 999px;
+  padding: 12px 28px;
+  font-weight: 700;
+  color: #5a6070;
+  border: none;
+  box-shadow:
+    6px 6px 14px #b8bec5,
+    -6px -6px 14px #ffffff;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+  cursor: pointer;
+}
+.neo-btn:hover { transform: translateY(-2px); }
+.neo-btn:active {
+  box-shadow:
+    inset 4px 4px 10px #b8bec5,
+    inset -4px -4px 10px #ffffff;
+  transform: translateY(0);
+}
+.neo-circle {
+  border-radius: 9999px;
+  box-shadow:
+    8px 8px 16px #b8bec5,
+    -8px -8px 16px #ffffff;
+}
+
+/* ============================================================
+   4. AURORA DARK (gradient mesh)
+   ============================================================ */
+
+.aurora-bg {
+  background:
+    radial-gradient(60% 40% at 15% 8%, rgba(124, 92, 255, 0.18), transparent),
+    radial-gradient(50% 40% at 85% 15%, rgba(255, 107, 138, 0.14), transparent),
+    radial-gradient(45% 40% at 50% 90%, rgba(0, 212, 170, 0.10), transparent),
+    #0c0c10;
+}
+.aurora-card {
+  background: #141418;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 1.25rem;
+  transition: border-color 0.4s ease, box-shadow 0.5s ease, transform 0.4s cubic-bezier(0.22,1,0.36,1);
+}
+.aurora-card:hover {
+  border-color: rgba(124,92,255,0.25);
+  box-shadow: 0 20px 50px rgba(124,92,255,0.08);
+  transform: translateY(-4px);
+}
+.aurora-btn {
+  background: linear-gradient(135deg, #7c5cff, #9b7aff);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 28px;
+  font-weight: 700;
+  box-shadow: 0 12px 32px rgba(124,92,255,0.35);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+.aurora-btn:hover { transform: translateY(-2px); box-shadow: 0 18px 44px rgba(124,92,255,0.5); }
+
+.aurora-glow {
+  position: relative;
+  overflow: hidden;
+}
+.aurora-glow::before {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit; padding: 1px;
+  background: linear-gradient(135deg, #7c5cff, #ff6b8a, #00d4aa);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* ============================================================
+   5. BRUTALIST
+   ============================================================ */
+
+.brutal-bg { background: #f5f0e8; }
+.brutal-card {
+  background: #fff;
+  border: 3px solid #000;
+  box-shadow: 8px 8px 0 #000;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.brutal-card:hover { transform: translate(-3px, -3px); box-shadow: 11px 11px 0 #000; }
+.brutal-btn {
+  background: #000;
+  color: #fff;
+  border: 3px solid #000;
+  padding: 12px 28px;
+  font-weight: 900;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  box-shadow: 5px 5px 0 #000;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s ease;
+  cursor: pointer;
+}
+.brutal-btn:hover { background: #e74c3c; transform: translate(-2px, -2px); box-shadow: 7px 7px 0 #000; }
+.brutal-btn:active { transform: translate(2px, 2px); box-shadow: 3px 3px 0 #000; }
+
+.brutal-stripe {
+  background: repeating-linear-gradient(45deg, #000 0 4px, transparent 4px 12px);
+  height: 6px;
+}
+
+/* ============================================================
+   6. RETRO TERMINAL
+   ============================================================ */
+
+.term-bg { background: #0a0a0a; }
+.term-card {
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 0;
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.08);
+}
+.term-glow { color: #00ff41; text-shadow: 0 0 12px rgba(0, 255, 65, 0.5); }
+.term-btn {
+  background: transparent;
+  border: 1px solid #00ff41;
+  color: #00ff41;
+  padding: 10px 24px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  transition: background 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+}
+.term-btn:hover { background: #00ff41; color: #000; }
+
+.term-scanline::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,0.25) 0 1px, transparent 1px 3px);
+  pointer-events: none;
+}
+
+@keyframes blink-cursor {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.blink { animation: blink-cursor 1s step-end infinite; }
+
+@keyframes type-line {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+/* ============================================================
+   7. GRADIENT MESH (bonus)
+   ============================================================ */
+
+.mesh-bg {
+  background:
+    radial-gradient(at 20% 30%, #ff6b6b44, transparent 55%),
+    radial-gradient(at 80% 20%, #ffd93d44, transparent 55%),
+    radial-gradient(at 60% 80%, #6bcb7744, transparent 55%),
+    radial-gradient(at 30% 70%, #4d96ff44, transparent 55%),
+    #0d0d12;
+}
+
+.mesh-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 1.5rem;
+  backdrop-filter: blur(12px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .float { animation: none !important; }
+  html { scroll-behavior: auto; }
+}
